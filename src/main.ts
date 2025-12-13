@@ -1,8 +1,8 @@
-import multer from 'multer';
 import 'reflect-metadata';
 import http from 'http';
 import express from 'express';
 import { FolderController } from './modules/folder/folder.controller';
+import {FileController} from './modules/file/file.controller' 
 import { EntityManager, EntityRepository, MikroORM, RequestContext } from '@mikro-orm/postgresql';
 import { File } from './modules/file/file.entity';
 import { Folder } from './modules/folder/folder.entity';
@@ -26,23 +26,15 @@ export const init = (async () => {
   DI.em = DI.orm.em;
   DI.folders = DI.orm.em.getRepository(Folder);
   DI.files = DI.orm.em.getRepository(File);
-  
-  const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'files/')
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname)
-    }
-  })
-  const upload = multer({ storage })
-  
-  const folderRouter = new FolderController(Router(),DI.em,DI.folders) 
 
+  
+  const folderRouter = new FolderController(Router(),DI.em,DI.folders).router 
+  const fileRouter = new FileController(Router(),DI.em,DI.files).router 
   app.use(express.json());
   app.use((req, res, next) => RequestContext.create(DI.orm.em, next));
   app.get('/', (req, res) => res.json({ message: 'Welcome' }));
-  app.use('/api/folder', folderRouter.router);
+  app.use('/api/folder', folderRouter);
+  app.use('/api/file',fileRouter)
   app.use((req, res) => res.status(404).json({ message: 'No route found' }));
 
   DI.server = app.listen(port, () => {

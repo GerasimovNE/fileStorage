@@ -5,26 +5,23 @@ import { Folder } from "../folder/folder.entity";
 @Unique({ properties: ['name', 'parent'] })
 export class File {
     @PrimaryKey()
-    id?:number;
+    id:number;
     @Property({
         nullable:false
     })
-    name?:string;
+    name:string;
 
     @Property({
         nullable:false,
     })
-    weight?: number;
+    weight: number;
     @Property({
         nullable:false
     })
-    server_name?:string;
+    server_name:string;
     
-    @Property({
-        type:'timestamp',
-        nullable:false
-    })
-    created_at?: string;
+    @Property()
+    created_at= new Date();
 
     @ManyToOne( () => Folder )
     parent: Folder;

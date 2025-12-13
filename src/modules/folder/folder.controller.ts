@@ -10,43 +10,49 @@ export class FolderController {
         public readonly router:Router,
         private readonly em:EntityManager,
         private readonly folderRepo:EntityRepository<Folder>
-    )
-        {
+    ){
         this.router = router
         const service = new FolderService(this.em,this.folderRepo)
+        this.router.get('/:id',async (req:Request,res:Response)=>{
+                try{
+                        res.json(await service.GetFolder(req.params.id))
+                }
+                catch (e){
+                        res.status(400).send(e.message)
+                }
 
-
-this.router.get('/:id',async (req:Request,res:Response)=>{
-
-        const result = await  service.GetFolder(parseInt(req.params.id))
-        return res.json(result)
-
-})
-
-this.router.post('/',async (req:Request,res:Response)=>{
-
-            await service.createFolder(req.body)
-            return res.status(200).send('complite')
-
-})
-
-this.router.delete('/:id',async (req:Request,res:Response)=>{
-        if (parseInt(req.params.id)==1){
-            return res.status(500).send('err')
+        })
+        this.router.post('/',async (req:Request,res:Response)=>{
+                try{
+                        await service.createFolder(req.body)
+                        res.status(200).send('complite')
+                }
+                catch(e){
+                        res.status(400).send(e.message)
+                }
+        })
+        this.router.delete('/:id',async (req:Request,res:Response)=>{
+                try{
+                        await service.DeleteFolder(req.params.id)
+                        res.send('folder deleted')
+                }
+                catch(e){
+                        res.status(400).send(e.message)
+                }
+        
+        })
+        this.router.patch('/:id', async (req:Request,res:Response)=>{
+                try{
+                        await service.UpdateFolder(req.params.id, req.body.name)
+                        return res.send('update complite')
+                }
+                catch(e){
+                        res.status(400).send(e.message)
+                }
+        })
+        this.router.get('/',async (req:Request,res:Response) =>{
+                const result = await service.GetFoldersTree()
+                return res.json(result)
+        })
         }
-        await service.DeleteFolder(parseInt(req.params.id))
-        return res.send('folder deleted')
- 
-})
-this.router.patch('/:id', async (req:Request,res:Response)=>{
-
-        await service.UpdateFolder(parseInt(req.params.id), req.body.name)
-        return res.send('update complite')
-})
-this.router.get('/',async (req:Request,res:Response) =>{
-        const result = await service.GetFoldersTree()
-        return res.json(result)
-})
-}
-
 }

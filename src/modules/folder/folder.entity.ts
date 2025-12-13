@@ -8,7 +8,10 @@ export class Folder{
     @Property({
         nullable:false
     })
-    name?:string;
+    name:string;
+
+    // @Property()
+    // created_at = new Date();
 
     @OneToMany(() =>File, file =>file.parent)
     files = new Collection<File>(this)
