@@ -1,12 +1,13 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20251207063040 extends Migration {
+export class Migration20251219115421 extends Migration {
 
   override async up(): Promise<void> {
-    this.addSql(`create table "folder" ("id" serial primary key, "name" varchar(255) not null, "parent_id" int null);`);
+    this.addSql(`create table "folder" ("id" serial primary key, "name" varchar(255) not null, "created_at" timestamptz not null, "parent_id" int null);`);
     this.addSql(`alter table "folder" add constraint "folder_name_parent_id_unique" unique ("name", "parent_id");`);
 
-    this.addSql(`create table "file" ("id" serial primary key, "name" varchar(255) not null, "weight" int not null, "server_name" varchar(255) not null, "created_at" timestamptz not null, "parent_id" int not null);`);
+    this.addSql(`create table "file" ("id" serial primary key, "originalname" varchar(255) not null, "size" int not null, "filename" varchar(255) not null, "created_at" timestamptz not null, "parent_id" int not null);`);
+    this.addSql(`alter table "file" add constraint "file_originalname_parent_id_unique" unique ("originalname", "parent_id");`);
 
     this.addSql(`alter table "folder" add constraint "folder_parent_id_foreign" foreign key ("parent_id") references "folder" ("id") on update cascade on delete cascade;`);
 

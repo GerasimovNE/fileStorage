@@ -2,26 +2,26 @@ import { Entity, Property, PrimaryKey, ManyToOne, Unique } from "@mikro-orm/post
 import { Folder } from "../folder/folder.entity";
 
 @Entity()
-@Unique({ properties: ['name', 'parent'] })
+@Unique({ properties: ['originalname', 'parent'] })
 export class File {
     @PrimaryKey()
     id:number;
     @Property({
         nullable:false
     })
-    name:string;
+    originalname:string;
 
     @Property({
         nullable:false,
     })
-    weight: number;
+    size: number;
     @Property({
         nullable:false
     })
-    server_name:string;
+    filename:string;
     
     @Property()
-    created_at= new Date();
+    created_at = new Date();
 
     @ManyToOne( () => Folder )
     parent: Folder;

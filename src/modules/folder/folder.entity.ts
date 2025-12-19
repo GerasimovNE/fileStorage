@@ -10,8 +10,8 @@ export class Folder{
     })
     name:string;
 
-    // @Property()
-    // created_at = new Date();
+    @Property()
+    created_at = new Date();
 
     @OneToMany(() =>File, file =>file.parent)
     files = new Collection<File>(this)
@@ -21,3 +21,4 @@ export class Folder{
 
     parent:Folder
 }
+

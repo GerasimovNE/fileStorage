@@ -6,6 +6,7 @@ export class DatabaseSeeder extends Seeder {
 
   async run(em: EntityManager): Promise<void> {
   const rootFolder = em.insert(Folder,{
-    name:'Root'
+    name:'Root',
+    created_at: new Date()
   })}
 }

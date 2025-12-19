@@ -1,5 +1,6 @@
-import { EntityManager, EntityRepository, RequiredEntityData, wrap } from '@mikro-orm/postgresql';
+import { EntityManager, EntityRepository, wrap } from '@mikro-orm/postgresql';
 import { Folder } from "./folder.entity";
+
 export class FolderService  {
     constructor(
         private readonly em:EntityManager,
@@ -13,11 +14,11 @@ export class FolderService  {
     private dontTochError = new Error('don`t tach this folder')
     private notExistError = new Error('folder not exist')
     
-    createFolder(folder: RequiredEntityData<Folder, never, false>){
-        this.em.create(Folder,folder)
+    createFolder(name,parent){
+        this.em.create(Folder,{name,parent})
         return this.em.flush()
     }
-    async GetFolder(id:string|null){
+    async GetFolder(id:string){
         const res = await this.folderRepo.createQueryBuilder('f')
         .where({'f.id':id})
         .leftJoinAndSelect('f.files','file',{})

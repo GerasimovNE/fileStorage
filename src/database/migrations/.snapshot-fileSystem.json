@@ -25,6 +25,16 @@
           "length": 255,
           "mappedType": "string"
         },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
         "parent_id": {
           "name": "parent_id",
           "type": "int",
@@ -89,8 +99,8 @@
           "nullable": false,
           "mappedType": "integer"
         },
-        "name": {
-          "name": "name",
+        "originalname": {
+          "name": "originalname",
           "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
@@ -99,8 +109,8 @@
           "length": 255,
           "mappedType": "string"
         },
-        "weight": {
-          "name": "weight",
+        "size": {
+          "name": "size",
           "type": "int",
           "unsigned": false,
           "autoincrement": false,
@@ -108,8 +118,8 @@
           "nullable": false,
           "mappedType": "integer"
         },
-        "server_name": {
-          "name": "server_name",
+        "filename": {
+          "name": "filename",
           "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
@@ -141,6 +151,17 @@
       "name": "file",
       "schema": "public",
       "indexes": [
+        {
+          "keyName": "file_originalname_parent_id_unique",
+          "columnNames": [
+            "originalname",
+            "parent_id"
+          ],
+          "composite": true,
+          "constraint": true,
+          "primary": false,
+          "unique": true
+        },
         {
           "keyName": "file_pkey",
           "columnNames": [

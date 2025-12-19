@@ -5,7 +5,8 @@ import { EntityManager, EntityRepository } from "@mikro-orm/postgresql";
 import { File } from "./file.entity";
 import randomstring from "randomstring";
 import 'dotenv/config';
-import multer from "multer";export class FileController {
+import multer from "multer";
+export class FileController {
 
     constructor(
         public readonly router:Router,
@@ -23,38 +24,73 @@ import multer from "multer";export class FileController {
             })
         const upload = multer({ storage,
             async fileFilter(req,file,cb){
-                if (await service.multerFilter(file.originalname,req.params.id)){
-                    cb(null, false)
+                const folder = await service.multerFilter(file.originalname,req.params.id)
+                if (!folder[0]){
+                    req.body.error='upload error. folder not exist'
+                    cb(null, false)    
                 }
                 else{
-                    cb(null, true)
-                }   
+                    if(folder[0].files[0]){
+                        req.body.error='upload error, file already exist'
+                        cb(null, false)   
+                    }
+                    else{
+                        cb(null, true)  
+                    }
+                }
             } 
         })
-        this.router.post('/:id',upload.single('file'), async (req:Request,res:Response)=>{
+        this.router.post('/file/:id',upload.single('file'), async (req:Request,res:Response)=>{
+/*#swagger.description = 'upload file'
+#swagger.parameters['id'] = {
+        description: 'id of parent folder',
+        required: true
+ }       
+ #swagger.parametrs['file'] = {
+        description:'file',
+        required: true}
+  #swagger.responses[200] = {
+     description: 'complite'
+ } */
             if ('file' in req){
                 await service.createFile({
-                name:req.file.originalname,
-                server_name:req.file.filename,
+                originalname:req.file.originalname,
+                filename:req.file.filename,
+                size:req.file.size,
                 parent:parseInt(req.params.id),
-                weight:req.file.size
                 })
             return res.send('upload complite')
             }
-            return res.status(400).send('upload error. file already exist')
+            return res.status(400).send(req.body.error)
         })
 
-        this.router.get('/:id',async (req:Request,res:Response)=>{
+        this.router.get('/file/:id',async (req:Request,res:Response)=>{
+/*#swagger.description = 'download file'
+#swagger.parameters['id'] = {
+        description: 'id of file',
+        required: true
+ } 
+ #swagger.responses[200] = {
+     description: 'file'
+ }*/ 
             try{
                 const file = await  service.getFile(parseInt(req.params.id))               
-                res.set("Content-Disposition", `attachment; filename="${file.name}"`);
-                res.sendFile(root_path + file_folder + file.server_name)}
+                res.set("Content-Disposition", `attachment; filename="${file.originalname}"`);
+                res.sendFile(root_path + file_folder + file.filename)}
             catch(e){
                 res.status(400).send(e.message)
             }
         })
 
-        this.router.delete('/:id', async (req:Request,res:Response)=>{
+        this.router.delete('/file/:id', async (req:Request,res:Response)=>{
+/*#swagger.description = 'delete file'
+#swagger.parameters['id'] = {
+        description: 'id of file',
+        required: true
+ } 
+#swagger.responses[200] = {
+     description: 'complite'
+ }*/ 
                 try{
                     await service.deleteFile(req.params.id,root_path+file_folder)
                     return res.send('deleted')
