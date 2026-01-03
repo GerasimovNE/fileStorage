@@ -9,8 +9,17 @@ const doc = {
    title: 'File System',
    description: 'file storage'
  },
-
+securityDefinitions: {
+apiKeyAuth: {
+type: 'apiKey',
+in: 'header',
+name: 'Authorization'
+}},
  definitions: {
+    RegUser:{
+      login:'login',
+      password:'password'
+    },
 
    Folder: {
      id: 12,
@@ -70,7 +79,7 @@ const outputFile = '../swagger/output.json'
 
 
 
-const endpointsFiles = [path.normalize(path.join(__dirname, '../../src/modules/*/*.controller.ts'))]
+const endpointsFiles = [path.normalize(path.join(__dirname, '../../src/*/*/*.controller.ts'))]
 
 swaggerAutogen()(outputFile, endpointsFiles, doc).then((res) => {
  console.log(`Generated: ${res}`)
