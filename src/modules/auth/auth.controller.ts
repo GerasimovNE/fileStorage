@@ -18,6 +18,7 @@ export class AuthController{
                 in: 'body',
             schema:{$ref:'#/definitions/RegUser'}
                 }*/ 
+            console.log(req)
             try{
                 return res.status(200).json(await servise.auth(req.body))
             }
