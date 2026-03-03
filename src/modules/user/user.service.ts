@@ -11,6 +11,7 @@ export class UserService{
     }
 
 getUser(id){
+    console.log()
     return this.userRepo.findOneOrFail({id})
 }
 async uploadAvatar(avatar_url,id){
